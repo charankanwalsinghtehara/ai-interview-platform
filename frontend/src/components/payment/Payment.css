@@ -1,0 +1,264 @@
+.contribution-page {
+
+    max-width: 750px;
+
+    margin: auto;
+
+}
+
+
+.contribution-card {
+
+    padding: 45px;
+
+    text-align: center;
+
+    background: white;
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 24px;
+
+    box-shadow: var(--shadow-md);
+
+}
+
+
+.contribution-icon {
+
+    width: 75px;
+
+    height: 75px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin: 0 auto 22px;
+
+    border-radius: 22px;
+
+    background: #fdf2f8;
+
+    color: #e11d48;
+
+}
+
+
+.contribution-card h1 {
+
+    margin-bottom: 14px;
+
+}
+
+
+.contribution-card > p {
+
+    max-width: 550px;
+
+    margin: auto;
+
+    line-height: 1.7;
+
+    color: var(--text-secondary);
+
+}
+
+
+/* ========================= */
+/* AMOUNTS */
+/* ========================= */
+
+.amount-options {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 12px;
+
+    margin: 30px 0 18px;
+
+}
+
+
+.amount {
+
+    padding: 14px;
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 12px;
+
+    background: white;
+
+    font-weight: 600;
+
+    transition: var(--transition);
+
+}
+
+
+.amount:hover {
+
+    border-color: var(--primary);
+
+}
+
+
+.amount.active {
+
+    background: var(--primary);
+
+    border-color: var(--primary);
+
+    color: white;
+
+}
+
+
+/* ========================= */
+/* CUSTOM AMOUNT */
+/* ========================= */
+
+.custom-amount {
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 16px;
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 12px;
+
+}
+
+
+.custom-amount span {
+
+    font-size: 20px;
+
+    font-weight: 600;
+
+}
+
+
+.custom-amount input {
+
+    width: 100%;
+
+    padding: 15px 10px;
+
+    border: none;
+
+    outline: none;
+
+    font-size: 16px;
+
+}
+
+
+/* ========================= */
+/* CONTRIBUTE BUTTON */
+/* ========================= */
+
+.contribute-button {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    margin-top: 20px;
+
+    padding: 16px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    background: var(--primary);
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+}
+
+
+.contribute-button:disabled {
+
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+}
+
+
+.contribution-note {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 22px;
+
+    font-size: 13px;
+
+    color: var(--text-secondary);
+
+}
+
+
+.secure-payment {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin-top: 15px;
+
+    font-size: 12px;
+
+    color: var(--text-light);
+
+}
+
+
+@media (max-width: 600px) {
+
+    .contribution-card {
+
+        padding: 30px 20px;
+
+    }
+
+
+    .amount-options {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+}

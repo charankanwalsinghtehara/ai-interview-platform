@@ -1,0 +1,511 @@
+.career-page {
+    width: 100%;
+}
+
+
+.career-loading,
+.career-error,
+.career-empty {
+    min-height: 280px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    gap: 12px;
+
+    border-radius: 18px;
+
+    padding: 30px;
+
+    background: var(--card-bg, #ffffff);
+
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+
+.loading-spinner {
+    animation: careerSpin 1s linear infinite;
+}
+
+
+@keyframes careerSpin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+.career-hero {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 22px;
+
+    padding: 28px;
+
+    margin-bottom: 28px;
+
+    border-radius: 20px;
+
+    background: var(--card-bg, #ffffff);
+
+    border: 1px solid rgba(0, 0, 0, 0.08);
+
+}
+
+
+.career-hero-icon,
+.role-icon,
+.skill-gap-icon {
+
+    width: 58px;
+
+    height: 58px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 16px;
+
+    background: rgba(99, 102, 241, 0.12);
+
+}
+
+
+.career-hero-content {
+
+    flex: 1;
+
+}
+
+
+.career-label {
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 6px;
+
+    opacity: 0.65;
+
+}
+
+
+.career-hero-content h2 {
+
+    margin: 0;
+
+    font-size: 28px;
+
+}
+
+
+.career-hero-content p {
+
+    margin-top: 8px;
+
+    opacity: 0.7;
+
+}
+
+
+.career-score-box {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 5px;
+
+    min-width: 110px;
+
+}
+
+
+.career-score-box strong {
+
+    font-size: 28px;
+
+}
+
+
+.career-score-box span {
+
+    font-size: 12px;
+
+    opacity: 0.65;
+
+}
+
+
+.career-section {
+
+    margin-bottom: 28px;
+
+}
+
+
+.section-title {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 18px;
+
+}
+
+
+.section-title h2 {
+
+    margin: 0 0 5px;
+
+}
+
+
+.section-title p {
+
+    margin: 0;
+
+    opacity: 0.7;
+
+}
+
+
+.role-matches-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(220px, 1fr)
+        );
+
+    gap: 18px;
+
+}
+
+
+.role-match-card {
+
+    padding: 22px;
+
+    border-radius: 18px;
+
+    background: var(--card-bg, #ffffff);
+
+    border: 1px solid rgba(0, 0, 0, 0.08);
+
+}
+
+
+.role-card-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+
+.role-rank {
+
+    font-weight: 700;
+
+    opacity: 0.6;
+
+}
+
+
+.role-match-card h3 {
+
+    margin: 18px 0;
+
+}
+
+
+.role-score {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin-bottom: 12px;
+
+}
+
+
+.progress-bar {
+
+    width: 100%;
+
+    height: 8px;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    background: rgba(0, 0, 0, 0.08);
+
+}
+
+
+.progress-fill {
+
+    height: 100%;
+
+    border-radius: inherit;
+
+    background: #6366f1;
+
+}
+
+
+.skill-gap-card {
+
+    padding: 26px;
+
+    border-radius: 20px;
+
+    background: var(--card-bg, #ffffff);
+
+    border: 1px solid rgba(0, 0, 0, 0.08);
+
+}
+
+
+.skill-gap-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    margin-bottom: 22px;
+
+}
+
+
+.skill-gap-header h2 {
+
+    margin: 0 0 5px;
+
+}
+
+
+.skill-gap-header p {
+
+    margin: 0;
+
+    opacity: 0.7;
+
+}
+
+
+.recommendations-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
+
+}
+
+
+.recommendation-item {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 16px;
+
+    border-radius: 14px;
+
+    background: rgba(99, 102, 241, 0.06);
+
+}
+
+
+.recommendation-item h4 {
+
+    margin: 0 0 6px;
+
+}
+
+
+.recommendation-item p {
+
+    margin: 0;
+
+    opacity: 0.7;
+
+}
+
+
+@media (max-width: 700px) {
+
+    .career-hero {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+
+    .career-score-box {
+
+        align-items: flex-start;
+
+    }
+
+}
+
+.role-skill-summary {
+
+    display: flex;
+
+    gap: 14px;
+
+    margin-top: 18px;
+
+    margin-bottom: 18px;
+
+}
+
+
+.skill-summary-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+.skill-summary-item.matched {
+
+    color: #16a34a;
+
+}
+
+
+.skill-summary-item.missing {
+
+    color: #dc2626;
+
+}
+
+
+.role-skills-section {
+
+    margin-top: 18px;
+
+}
+
+
+.role-skills-section h4 {
+
+    font-size: 13px;
+
+    margin-bottom: 10px;
+
+}
+
+
+.role-skills {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+}
+
+
+.skill-tag {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+}
+
+
+.matched-tag {
+
+    background: rgba(34, 197, 94, 0.12);
+
+    color: #16a34a;
+
+}
+
+
+.missing-tag {
+
+    background: rgba(239, 68, 68, 0.1);
+
+    color: #dc2626;
+
+}
+
+
+.important-tag {
+
+    background: rgba(245, 158, 11, 0.12);
+
+    color: #d97706;
+
+}
