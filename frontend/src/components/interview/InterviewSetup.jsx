@@ -1,270 +1,256 @@
-import {
-    useState
-} from "react";
 
-import PageHeader from "../../components/common/PageHeader";
-
-import InterviewSetup from "../../components/interview/InterviewSetup";
-
-import InterviewQuestion from "../../components/interview/InterviewQuestion";
-
-import InterviewResult from "../../components/interview/InterviewResult";
+import { useState } from "react";
 
 import {
+    BrainCircuit,
+    Code2,
+    Database,
+    BarChart3,
+    Play
+} from "lucide-react";
 
-    startInterview,
-
-    submitAnswer,
-
-    completeInterview,
-
-    getInterviewReport
-
-} from "../../services/interviewService";
+import "./Interview.css";
 
 
-function Interview() {
+function InterviewSetup({ onStart }) {
 
-    const [stage, setStage] =
-        useState("setup");
-
-
-    const [interview, setInterview] =
-        useState(null);
+    const [category, setCategory] =
+        useState("Data Science");
 
 
-    const [questions, setQuestions] =
-        useState([]);
+    const [difficulty, setDifficulty] =
+        useState("Medium");
 
 
-    const [currentQuestionIndex, setCurrentQuestionIndex] =
-        useState(0);
+    const [loading, setLoading] =
+        useState(false);
 
 
-    const [report, setReport] =
-        useState(null);
+    const categories = [
+
+    {
+        name: "Data Scientist",
+        icon: BrainCircuit
+    },
+
+    {
+        name: "Data Analyst",
+        icon: BarChart3
+    },
+
+    {
+        name: "Business Analyst",
+        icon: BrainCircuit
+    }
+
+];
 
 
-    const handleStartInterview = async (
-        setupData
-    ) => {
+    const handleStart = async () => {
 
-        try {
-
-            const data =
-                await startInterview(
-                    setupData
-                );
-
-
-            const interviewData =
-                data.interview;
-
-
-            setInterview(
-                interviewData
-            );
-
-
-            setQuestions(
-                interviewData.questions || []
-            );
-
-
-            setCurrentQuestionIndex(0);
-
-
-            if (
-                interviewData.questions &&
-                interviewData.questions.length > 0
-            ) {
-
-                setStage("question");
-
-            }
-
-            else {
-
-                console.error(
-                    "No interview questions received."
-                );
-
-            }
-
-        }
-
-        catch (error) {
-
-            console.error(
-                "Interview start error:",
-                error.response?.data ||
-                error
-            );
-
-        }
-
-    };
-
-
-    const handleSubmitAnswer = async (
-        answer
-    ) => {
-
-        if (
-            !interview ||
-            !questions.length
-        ) {
-
+        if (loading) {
             return;
-
         }
 
-
-        const currentQuestion =
-            questions[
-                currentQuestionIndex
-            ];
-
+        setLoading(true);
 
         try {
 
-            await submitAnswer(
+            await onStart({
 
-                currentQuestion.id,
+    role: category,
 
-                {
+    difficulty: difficulty
 
-                    answer_text: answer
-
-                }
-
-            );
-
-
-            const isLastQuestion =
-
-                currentQuestionIndex ===
-                questions.length - 1;
-
-
-            if (isLastQuestion) {
-
-                await completeInterview(
-                    interview.id
-                );
-
-
-                const reportData =
-                    await getInterviewReport(
-                        interview.id
-                    );
-
-
-                setReport(reportData);
-
-
-                setStage("result");
-
-            }
-
-            else {
-
-                setCurrentQuestionIndex(
-                    (previousIndex) =>
-                        previousIndex + 1
-                );
-
-            }
+});
 
         }
 
         catch (error) {
 
             console.error(
-                "Answer submission error:",
-                error.response?.data ||
+                "Interview setup error:",
                 error
             );
 
         }
 
+        finally {
+
+            setLoading(false);
+
+        }
+
     };
-
-
-    const currentQuestion =
-        questions[
-            currentQuestionIndex
-        ];
 
 
     return (
 
-        <div className="page-container">
-
-            <PageHeader
-
-                title="AI Interview"
-
-                subtitle="Practice your skills with an intelligent interview experience."
-
-            />
+        <div className="interview-setup">
 
 
-            {
-                stage === "setup" && (
+            {/* HERO */}
 
-                    <InterviewSetup
+            <div className="setup-hero">
 
-                        onStart={
-                            handleStartInterview
-                        }
+                <div className="setup-icon">
 
-                    />
+                    <BrainCircuit size={38} />
 
-                )
-            }
+                </div>
 
 
-            {
-                stage === "question" &&
-                currentQuestion && (
-
-                    <InterviewQuestion
-
-                        question={
-                            currentQuestion.question_text ||
-                            currentQuestion.question
-                        }
-
-                        questionNumber={
-                            currentQuestionIndex + 1
-                        }
-
-                        totalQuestions={
-                            questions.length
-                        }
-
-                        onSubmit={
-                            handleSubmitAnswer
-                        }
-
-                    />
-
-                )
-            }
+                <h2>
+                    AI Mock Interview
+                </h2>
 
 
-            {
-                stage === "result" && (
+                <p>
 
-                    <InterviewResult
+                    Test your knowledge with an
+                    intelligent interview experience
+                    based on your selected skill area.
 
-                        report={report}
+                </p>
 
-                    />
+            </div>
 
-                )
-            }
+
+            {/* CATEGORY */}
+
+            <div className="setup-section">
+
+                <h3>
+                    Select Interview Category
+                </h3>
+
+
+                <div className="category-selection">
+
+                    {
+                        categories.map(
+
+                            ({
+                                name,
+                                icon: Icon
+                            }) => (
+
+                                <button
+
+                                    type="button"
+
+                                    key={name}
+
+                                    className={
+                                        `category-option ${
+                                            category === name
+                                                ? "active"
+                                                : ""
+                                        }`
+                                    }
+
+                                    onClick={() =>
+                                        setCategory(name)
+                                    }
+
+                                >
+
+                                    <Icon size={24} />
+
+                                    <span>
+                                        {name}
+                                    </span>
+
+                                </button>
+
+                            )
+
+                        )
+                    }
+
+                </div>
+
+            </div>
+
+
+            {/* DIFFICULTY */}
+
+            <div className="setup-section">
+
+                <h3>
+                    Select Difficulty
+                </h3>
+
+
+                <div className="difficulty-selection">
+
+                    {
+                        [
+                            "Easy",
+                            "Medium",
+                            "Hard"
+                        ].map(
+
+                            (level) => (
+
+                                <button
+
+                                    type="button"
+
+                                    key={level}
+
+                                    className={
+                                        `difficulty-option ${
+                                            difficulty === level
+                                                ? "active"
+                                                : ""
+                                        }`
+                                    }
+
+                                    onClick={() =>
+                                        setDifficulty(level)
+                                    }
+
+                                >
+
+                                    {level}
+
+                                </button>
+
+                            )
+
+                        )
+                    }
+
+                </div>
+
+            </div>
+
+
+            {/* START */}
+
+            <button
+
+                type="button"
+
+                className="start-interview-button"
+
+                onClick={handleStart}
+
+                disabled={loading}
+
+            >
+
+                <Play size={20} />
+
+                {
+                    loading
+                        ? "Starting Interview..."
+                        : "Start AI Interview"
+                }
+
+            </button>
+
 
         </div>
 
@@ -273,4 +259,5 @@ function Interview() {
 }
 
 
-export default Interview;
+export default InterviewSetup;
+

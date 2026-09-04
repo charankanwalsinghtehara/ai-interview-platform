@@ -1,5 +1,5 @@
 import {
-    useState
+useState
 } from "react";
 
 import PageHeader from "../../components/common/PageHeader";
@@ -7,240 +7,349 @@ import PageHeader from "../../components/common/PageHeader";
 import InterviewSetup from "../../components/interview/InterviewSetup";
 
 import InterviewQuestion from "../../components/interview/InterviewQuestion";
-
 import InterviewResult from "../../components/interview/InterviewResult";
 
 import {
-
     startInterview,
-
     submitAnswer,
-
     completeInterview,
-
-    getInterviewReport
-
-} from "../../services/interviewService";
-
+    getInterviewReport,
+     
+} from "../../services/interviewService";;
 
 function Interview() {
 
-    const [stage, setStage] =
-        useState("setup");
+const [stage, setStage] =
+    useState("setup");
 
 
-    const [interview, setInterview] =
-        useState(null);
+const [loading, setLoading] =
+    useState(false);
 
 
-    const [questions, setQuestions] =
-        useState([]);
+const [error, setError] =
+    useState("");
 
 
-    const [currentQuestionIndex, setCurrentQuestionIndex] =
-        useState(0);
+const [interview, setInterview] =
+    useState(null);
 
 
-    const [report, setReport] =
-        useState(null);
+const [questions, setQuestions] =
+    useState([]);
 
 
-    const handleStartInterview = async (
-        setupData
-    ) => {
+const [currentQuestionIndex, setCurrentQuestionIndex] =
+    useState(0);
 
-        try {
+const [report, setReport] =
+    useState(null);
 
-            const data =
-                await startInterview(
-                    setupData
-                );
+const [submitting, setSubmitting] =
+    useState(false);
 
 
-            setInterview(data);
 
 
-            setQuestions(
-                data.questions || []
-            );
+const handleStart = async (data) => {
+
+    try {
+
+        setLoading(true);
+
+        setError("");
 
 
-            setCurrentQuestionIndex(0);
+        const response =
+            await startInterview(data);
 
+
+        console.log(
+            "Interview API response:",
+            response
+        );
+
+
+        const interviewData =
+            response.interview;
+
+
+        setInterview(interviewData);
+
+
+        setQuestions(
+            interviewData.questions || []
+        );
+
+
+        setCurrentQuestionIndex(0);
+
+
+        if (
+            interviewData.questions &&
+            interviewData.questions.length > 0
+        ) {
 
             setStage("question");
 
         }
 
-        catch (error) {
+        else {
 
-            console.error(
-                "Interview start error:",
-                error
+            setError(
+                "No interview questions were generated."
             );
 
         }
-
-    };
-
-
-    const handleSubmitAnswer = async (
-        answer
-    ) => {
-
-        if (!interview) {
-
-            return;
-
-        }
-
-
-        const currentQuestion =
-            questions[
-                currentQuestionIndex
-            ];
-
-
-        try {
-
-            await submitAnswer(
-
-    currentQuestion.id,
-
-    {
-
-        answer: answer
 
     }
 
-);
+    catch (error) {
 
-            const isLastQuestion =
-
-                currentQuestionIndex ===
-                questions.length - 1;
-
-
-            if (isLastQuestion) {
-
-                await completeInterview(
-                    interview.id
-                );
+        console.error(
+            "Interview start error:",
+            error.response?.data || error
+        );
 
 
-                const reportData =
-                    await getInterviewReport(
-                        interview.id
-                    );
+        setError(
+
+            error.response?.data?.error ||
+
+            error.response?.data?.detail ||
+
+            "Unable to start the interview."
+
+        );
+
+    }
+
+    finally {
+
+        setLoading(false);
+
+    }
+
+};
 
 
-                setReport(reportData);
+const handleSubmitAnswer = async (
+answerText
+) => {
 
-                setStage("result");
 
-            }
+if (submitting) {
 
-            else {
+    return;
 
-                setCurrentQuestionIndex(
+}
 
-                    currentQuestionIndex + 1
 
-                );
+const currentQuestion =
+    questions[currentQuestionIndex];
 
-            }
 
+if (!currentQuestion) {
+
+    return;
+
+}
+
+
+try {
+
+    setSubmitting(true);
+
+    setLoading(true);
+
+    setError("");
+
+
+    console.log(
+        "Submitting answer for question:",
+        currentQuestion.id
+    );
+
+
+    await submitAnswer(
+
+        currentQuestion.id,
+
+        {
+            answer_text: answerText
         }
-
-        catch (error) {
-
-            console.error(
-                "Answer submission error:",
-                error
-            );
-
-        }
-
-    };
-
-
-    const currentQuestion =
-        questions[
-            currentQuestionIndex
-        ];
-
-
-    return (
-
-        <div className="page-container">
-
-            <PageHeader
-
-                title="AI Interview"
-
-                subtitle="Practice your skills with an intelligent interview experience."
-
-            />
-
-
-            {
-                stage === "setup" && (
-
-                    <InterviewSetup
-
-                        onStart={
-                            handleStartInterview
-                        }
-
-                    />
-
-                )
-            }
-
-
-            {
-                stage === "question" &&
-                currentQuestion && (
-
-                    <InterviewQuestion
-
-                        question={
-                            currentQuestion.question
-                        }
-
-                        questionNumber={
-                            currentQuestionIndex + 1
-                        }
-
-                        totalQuestions={
-                            questions.length
-                        }
-
-                        onSubmit={
-                            handleSubmitAnswer
-                        }
-
-                    />
-
-                )
-            }
-
-
-            {
-                stage === "result" && (
-
-                    <InterviewResult
-
-                        report={report}
-
-                    />
-
-                )
-            }
-
-        </div>
 
     );
+
+
+    const isLastQuestion =
+
+        currentQuestionIndex ===
+        questions.length - 1;
+
+
+    if (isLastQuestion) {
+
+        await completeInterview(
+            interview.id
+        );
+
+
+        const reportData =
+            await getInterviewReport(
+                interview.id
+            );
+
+
+        console.log(
+            "Interview report:",
+            reportData
+        );
+
+
+        setReport(reportData);
+
+
+        setStage("result");
+
+    }
+
+    else {
+
+        setCurrentQuestionIndex(
+            (previousIndex) =>
+                previousIndex + 1
+        );
+
+    }
+
+}
+
+catch (error) {
+
+    console.error(
+        "Answer submission error:",
+        error.response?.data || error
+    );
+
+
+    setError(
+
+        error.response?.data?.error ||
+
+        error.response?.data?.detail ||
+
+        "Unable to submit your answer."
+
+    );
+
+}
+
+finally {
+
+    setSubmitting(false);
+
+    setLoading(false);
+
+}
+
+
+};
+
+
+const currentQuestion =
+    questions[currentQuestionIndex];
+
+
+return (
+
+    <div className="page-container">
+
+        <PageHeader
+
+            title="AI Interview"
+
+            subtitle="Practice your skills with an intelligent interview experience."
+
+        />
+
+
+        {
+            error && (
+
+                <div className="resume-error">
+
+                    {error}
+
+                </div>
+
+            )
+        }
+
+
+        {
+            stage === "setup" && (
+
+                <InterviewSetup
+
+                    onStart={handleStart}
+
+                    loading={loading || submitting}
+
+                />
+
+            )
+        }
+
+
+              {
+            stage === "question" &&
+            currentQuestion && (
+
+                <InterviewQuestion
+
+                    question={
+                        currentQuestion.question_text ||
+                        currentQuestion.question
+                    }
+
+                    questionNumber={
+                        currentQuestionIndex + 1
+                    }
+
+                    totalQuestions={
+                        questions.length
+                    }
+
+                    onSubmit={
+                        handleSubmitAnswer
+                    }
+
+                    loading={loading || submitting}
+
+                />
+
+            )
+        }
+
+
+        {/* RESULT */}
+
+        {
+            stage === "result" && (
+
+                <InterviewResult
+
+                    report={report}
+
+                />
+
+            )
+        }
+
+    </div>
+
+);
 
 }
 

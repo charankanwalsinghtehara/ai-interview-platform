@@ -13,24 +13,16 @@ function InterviewQuestion({
 
 
 question,
-
 questionNumber,
-
 totalQuestions,
-
-onSubmit
+onSubmit,
+loading
 
 
 }) {
 
 
 const [answer, setAnswer] =
-    useState("");
-
-const [loading, setLoading] =
-    useState(false);
-
-const [error, setError] =
     useState("");
 
 
@@ -43,56 +35,32 @@ const handleSubmit = async () => {
     }
 
 
-    setLoading(true);
-
-    setError("");
-
-
-    try {
-
-        await onSubmit(
-            answer
-        );
+    await onSubmit(
+        answer
+    );
 
 
-        setAnswer("");
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Submit answer error:",
-            error
-        );
-
-        setError(
-            "Failed to submit your answer. Please try again."
-        );
-
-    }
-
-    finally {
-
-        setLoading(false);
-
-    }
+    setAnswer("");
 
 };
 
 
 const progress =
 
-    (questionNumber / totalQuestions)
-    * 100;
+    totalQuestions > 0
+
+        ? (
+            questionNumber /
+            totalQuestions
+        ) * 100
+
+        : 0;
 
 
 return (
 
     <div className="interview-question">
 
-
-        {/* PROGRESS */}
 
         <div className="interview-progress-header">
 
@@ -103,7 +71,7 @@ return (
                 </span>
 
                 <strong>
-                    of {totalQuestions}
+                    {" "}of {totalQuestions}
                 </strong>
 
             </div>
@@ -128,8 +96,6 @@ return (
         </div>
 
 
-        {/* QUESTION */}
-
         <div className="question-card">
 
             <div className="question-icon">
@@ -142,13 +108,14 @@ return (
 
 
             <h2>
-                {question}
+
+                {question ||
+                    "Question not available."}
+
             </h2>
 
         </div>
 
-
-        {/* ANSWER */}
 
         <div className="answer-card">
 
@@ -162,31 +129,20 @@ return (
                 value={answer}
 
                 onChange={(event) =>
+
                     setAnswer(
                         event.target.value
                     )
+
                 }
 
                 placeholder="Write your answer here..."
 
-                rows="8"
+                rows={8}
 
                 disabled={loading}
 
             />
-
-
-            {
-                error && (
-
-                    <div className="interview-error">
-
-                        {error}
-
-                    </div>
-
-                )
-            }
 
 
             <div className="answer-footer">
@@ -199,6 +155,8 @@ return (
 
 
                 <button
+
+                    type="button"
 
                     className="submit-answer-button"
 

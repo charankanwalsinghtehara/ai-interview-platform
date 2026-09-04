@@ -71,15 +71,17 @@ export const completeInterview = async (
 /* ========================= */
 
 export const getInterviewReport = async (
-    interviewId
+interviewId
 ) => {
 
-    const response = await api.get(
 
-        `/evaluation/interview/${interviewId}/`
+const response = await api.post(
 
-    );
+    `/evaluation/interviews/${interviewId}/report/`
 
-    return response.data;
+);
+
+return response.data;
+
 
 };
