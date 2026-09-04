@@ -1,0 +1,124 @@
+```gitignore
+# =====================================
+# PYTHON
+# =====================================
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+*.so
+
+.Python
+
+
+# =====================================
+# VIRTUAL ENVIRONMENT
+# =====================================
+
+venv/
+env/
+ENV/
+.venv/
+
+
+# =====================================
+# ENVIRONMENT VARIABLES / SECRETS
+# =====================================
+
+.env
+.env.*
+!.env.example
+
+
+# =====================================
+# DJANGO
+# =====================================
+
+*.log
+
+local_settings.py
+
+
+# SQLite database
+db.sqlite3
+db.sqlite3-journal
+
+
+# Static files collected for production
+staticfiles/
+
+
+# =====================================
+# DJANGO MEDIA / UPLOADED FILES
+# =====================================
+
+media/
+
+
+# =====================================
+# PYTEST / TESTING
+# =====================================
+
+.pytest_cache/
+.coverage
+htmlcov/
+
+
+# =====================================
+# JUPYTER
+# =====================================
+
+.ipynb_checkpoints/
+
+
+# =====================================
+# NODE / REACT / VITE
+# =====================================
+
+frontend/node_modules/
+
+frontend/dist/
+
+frontend/.vite/
+
+
+# =====================================
+# NODE LOGS
+# =====================================
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+pnpm-debug.log*
+
+
+# =====================================
+# IDE / EDITOR
+# =====================================
+
+.vscode/
+
+.idea/
+
+*.swp
+*.swo
+
+
+# =====================================
+# OPERATING SYSTEM
+# =====================================
+
+.DS_Store
+
+Thumbs.db
+
+
+# =====================================
+# MODEL TEMPORARY FILES
+# =====================================
+
+*.tmp
+*.temp
+```

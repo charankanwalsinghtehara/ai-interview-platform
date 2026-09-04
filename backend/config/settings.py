@@ -1,28 +1,54 @@
 
+import os
 
 from pathlib import Path
+from dotenv import load_dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# ==================================================
+# BASE DIRECTORY
+# ==================================================
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
+# ==================================================
+# SECURITY
+# ==================================================
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-bu4gx3t2d)sq36w6xdys^w1s^hem5=lbs#_wsc%c_xhq)jef^z'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "django-insecure-change-this-in-production"
+)
 
 
+DEBUG = os.environ.get(
+    "DEBUG",
+    "False"
+).lower() == "true"
 
 
-# Application definition
+ALLOWED_HOSTS = [
+
+    host.strip()
+
+    for host in os.environ.get(
+        "ALLOWED_HOSTS",
+        "localhost,127.0.0.1"
+    ).split(",")
+
+    if host.strip()
+
+]
+
+
+# ==================================================
+# APPLICATIONS
+# ==================================================
 
 INSTALLED_APPS = [
+
+    # Django apps
+
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -30,11 +56,15 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+
     # Third-party apps
+
     "rest_framework",
     "corsheaders",
 
+
     # Local apps
+
     "apps.core",
     "apps.accounts",
     "apps.resumes",
@@ -45,113 +75,276 @@ INSTALLED_APPS = [
     "apps.reports",
     "apps.jobs",
     "apps.payments.apps.PaymentsConfig",
+
 ]
+
+
+# ==================================================
+# MIDDLEWARE
+# ==================================================
 
 MIDDLEWARE = [
+
+    "django.middleware.security.SecurityMiddleware",
+
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+
     "corsheaders.middleware.CorsMiddleware",
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    "django.contrib.sessions.middleware.SessionMiddleware",
+
+    "django.middleware.common.CommonMiddleware",
+
+    "django.middleware.csrf.CsrfViewMiddleware",
+
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+
+    "django.contrib.messages.middleware.MessageMiddleware",
+
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
 ]
 
-ROOT_URLCONF = 'config.urls'
+
+# ==================================================
+# URL CONFIGURATION
+# ==================================================
+
+ROOT_URLCONF = "config.urls"
+
+
+# ==================================================
+# TEMPLATES
+# ==================================================
 
 TEMPLATES = [
+
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+
+        "BACKEND":
+            "django.template.backends.django.DjangoTemplates",
+
+        "DIRS": [],
+
+        "APP_DIRS": True,
+
+        "OPTIONS": {
+
+            "context_processors": [
+
+                "django.template.context_processors.request",
+
+                "django.contrib.auth.context_processors.auth",
+
+                "django.contrib.messages.context_processors.messages",
+
             ],
+
         },
+
     },
+
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
+
+# ==================================================
+# WSGI
+# ==================================================
+
+WSGI_APPLICATION = "config.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/6.1/ref/settings/#databases
+# ==================================================
+# DATABASE
+# ==================================================
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+
+    "default": {
+
+        "ENGINE":
+            os.environ.get(
+                "DB_ENGINE",
+                "django.db.backends.sqlite3"
+            ),
+
+        "NAME":
+            os.environ.get(
+                "DB_NAME",
+                BASE_DIR / "db.sqlite3"
+            ),
+
     }
+
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
+# ==================================================
+# PASSWORD VALIDATION
+# ==================================================
 
 AUTH_PASSWORD_VALIDATORS = [
+
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+
+        "NAME":
+            "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+
     },
+
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+
+        "NAME":
+            "django.contrib.auth.password_validation.MinimumLengthValidator",
+
     },
+
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+
+        "NAME":
+            "django.contrib.auth.password_validation.CommonPasswordValidator",
+
     },
+
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+
+        "NAME":
+            "django.contrib.auth.password_validation.NumericPasswordValidator",
+
     },
+
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/6.1/topics/i18n/
+# ==================================================
+# INTERNATIONALIZATION
+# ==================================================
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+
+TIME_ZONE = "UTC"
+
 
 USE_I18N = True
+
 
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.1/howto/static-files/
+# ==================================================
+# STATIC FILES
+# ==================================================
 
-STATIC_URL = 'static/'
+STATIC_URL = "/static/"
 
 
-# Email
-# https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+
+STORAGES = {
+
+    "staticfiles": {
+
+        "BACKEND":
+            "whitenoise.storage.CompressedManifestStaticFilesStorage",
+
     },
+
 }
+
+
+# ==================================================
+# MEDIA FILES
+# ==================================================
+
+MEDIA_URL = "/media/"
+
+
+MEDIA_ROOT = BASE_DIR / "media"
+
+
+# ==================================================
+# CUSTOM USER MODEL
+# ==================================================
+
+AUTH_USER_MODEL = "accounts.User"
+
+
+# ==================================================
+# DJANGO REST FRAMEWORK
+# ==================================================
+
+REST_FRAMEWORK = {
+
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+
+    ),
+
+}
+
+
+# ==================================================
+# CORS
+# ==================================================
 
 CORS_ALLOWED_ORIGINS = [
 
-    "http://localhost:5173",
+    origin.strip()
 
-    "http://127.0.0.1:5173",
+    for origin in os.environ.get(
+        "CORS_ALLOWED_ORIGINS",
+        "http://localhost:5173,http://127.0.0.1:5173"
+    ).split(",")
+
+    if origin.strip()
 
 ]
-AUTH_USER_MODEL = "accounts.User"
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-}
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
 
-RAZORPAY_KEY_ID = "key"
+# ==================================================
+# CSRF
+# ==================================================
 
-RAZORPAY_KEY_SECRET = "123456"
+CSRF_TRUSTED_ORIGINS = [
+
+    origin.strip()
+
+    for origin in os.environ.get(
+        "CSRF_TRUSTED_ORIGINS",
+        ""
+    ).split(",")
+
+    if origin.strip()
+
+]
+
+
+# ==================================================
+# PRODUCTION SECURITY
+# ==================================================
+
+if not DEBUG:
+
+    SECURE_PROXY_SSL_HEADER = (
+        "HTTP_X_FORWARDED_PROTO",
+        "https"
+    )
+
+    SECURE_SSL_REDIRECT = True
+
+    SESSION_COOKIE_SECURE = True
+
+    CSRF_COOKIE_SECURE = True
+
+
+# ==================================================
+# EMAIL
+# ==================================================
+
+EMAIL_BACKEND = (
+    "django.core.mail.backends.console.EmailBackend"
+)
+

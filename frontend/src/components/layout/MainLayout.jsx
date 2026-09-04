@@ -10,11 +10,15 @@ function MainLayout({ children }) {
 
         <div className="app-layout">
 
+
             <Sidebar />
+
 
             <div className="main-section">
 
+
                 <Header />
+
 
                 <main className="main-content">
 
@@ -22,7 +26,9 @@ function MainLayout({ children }) {
 
                 </main>
 
+
             </div>
+
 
         </div>
 

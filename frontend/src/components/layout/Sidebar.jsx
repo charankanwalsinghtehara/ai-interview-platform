@@ -8,7 +8,8 @@ import {
     BriefcaseBusiness,
     Heart,
     LogOut,
-    BrainCircuit
+    BrainCircuit,
+    CreditCard
 } from "lucide-react";
 
 import { useAuth } from "../../context/AuthContext";
@@ -62,6 +63,12 @@ function Sidebar() {
             name: "Job Matches",
             path: "/jobs",
             icon: BriefcaseBusiness
+        },
+
+        {
+            name: "Subscription",
+            path: "/pricing",
+            icon: CreditCard
         }
 
     ];
@@ -71,7 +78,10 @@ function Sidebar() {
 
         <aside className="sidebar">
 
-            {/* Logo */}
+
+            {/* ========================= */}
+            {/* LOGO */}
+            {/* ========================= */}
 
             <div className="sidebar-logo">
 
@@ -97,19 +107,26 @@ function Sidebar() {
             </div>
 
 
-            {/* Navigation */}
+            {/* ========================= */}
+            {/* NAVIGATION */}
+            {/* ========================= */}
 
             <nav className="sidebar-nav">
 
+
                 <p className="nav-label">
+
                     MAIN MENU
+
                 </p>
 
 
                 {
+
                     menuItems.map((item) => {
 
                         const Icon = item.icon;
+
 
                         return (
 
@@ -120,11 +137,13 @@ function Sidebar() {
                                 to={item.path}
 
                                 className={({ isActive }) =>
+
                                     `sidebar-link ${
                                         isActive
                                             ? "active"
                                             : ""
                                     }`
+
                                 }
 
                             >
@@ -140,11 +159,18 @@ function Sidebar() {
                         );
 
                     })
+
                 }
 
 
-                <p className="nav-label">
+                {/* ========================= */}
+                {/* SUPPORT */}
+                {/* ========================= */}
+
+                <p className="nav-label support-label">
+
                     SUPPORT
+
                 </p>
 
 
@@ -153,11 +179,13 @@ function Sidebar() {
                     to="/contribution"
 
                     className={({ isActive }) =>
+
                         `sidebar-link ${
                             isActive
                                 ? "active"
                                 : ""
                         }`
+
                     }
 
                 >
@@ -170,16 +198,25 @@ function Sidebar() {
 
                 </NavLink>
 
+
             </nav>
 
 
-            {/* Logout */}
+            {/* ========================= */}
+            {/* LOGOUT */}
+            {/* ========================= */}
 
             <div className="sidebar-footer">
 
+
                 <button
+
+                    type="button"
+
                     className="logout-button"
+
                     onClick={handleLogout}
+
                 >
 
                     <LogOut size={20} />
@@ -190,7 +227,9 @@ function Sidebar() {
 
                 </button>
 
+
             </div>
+
 
         </aside>
 

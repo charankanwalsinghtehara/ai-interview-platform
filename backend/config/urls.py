@@ -1,3 +1,4 @@
+
 from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
@@ -8,40 +9,136 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+
 urlpatterns = [
-    path("admin/", admin.site.urls),
 
-    # Authentication
-    path("api/auth/", include("apps.accounts.urls")),
+    # =========================
+    # DJANGO ADMIN
+    # =========================
 
-    # JWT
-    path("api/auth/login/", TokenObtainPairView.as_view(), name="login"),
-    path("api/auth/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path(
+        "admin/",
+        admin.site.urls
+    ),
 
-    # Resume APIs
-    path("api/resumes/", include("apps.resumes.urls")),
 
-#intelligence
-    path("api/intelligence/",include("apps.intelligence.urls")),
+    # =========================
+    # AUTHENTICATION
+    # =========================
 
-#analytics
-path("api/analytics/",include("apps.analytics.urls")),
+    path(
+        "api/auth/",
+        include("apps.accounts.urls")
+    ),
 
-#interviews
-path("api/interviews/",include("apps.interviews.urls")),
 
-#evaluation
-path("api/evaluation/",include("apps.evaluation.urls")),
+    # =========================
+    # JWT AUTHENTICATION
+    # =========================
 
-#reports
-path("api/reports/",include("apps.reports.urls")),
+    path(
+        "api/auth/login/",
+        TokenObtainPairView.as_view(),
+        name="login"
+    ),
 
-#jobs
-path("api/jobs/",include("apps.jobs.urls")),
+    path(
+        "api/auth/refresh/",
+        TokenRefreshView.as_view(),
+        name="token_refresh"
+    ),
 
-#payments
-path("api/payments/",include("apps.payments.urls")),
+
+    # =========================
+    # RESUME
+    # =========================
+
+    path(
+        "api/resumes/",
+        include("apps.resumes.urls")
+    ),
+
+
+    # =========================
+    # INTELLIGENCE
+    # =========================
+
+    path(
+        "api/intelligence/",
+        include("apps.intelligence.urls")
+    ),
+
+
+    # =========================
+    # ANALYTICS
+    # =========================
+
+    path(
+        "api/analytics/",
+        include("apps.analytics.urls")
+    ),
+
+
+    # =========================
+    # INTERVIEWS
+    # =========================
+
+    path(
+        "api/interviews/",
+        include("apps.interviews.urls")
+    ),
+
+
+    # =========================
+    # EVALUATION
+    # =========================
+
+    path(
+        "api/evaluation/",
+        include("apps.evaluation.urls")
+    ),
+
+
+    # =========================
+    # REPORTS
+    # =========================
+
+    path(
+        "api/reports/",
+        include("apps.reports.urls")
+    ),
+
+
+    # =========================
+    # JOB MATCHES
+    # =========================
+
+    path(
+        "api/jobs/",
+        include("apps.jobs.urls")
+    ),
+
+
+    # =========================
+    # PAYMENTS / SUBSCRIPTIONS
+    # =========================
+
+    path(
+        "api/payments/",
+        include("apps.payments.urls")
+    ),
+
 ]
 
+
+# =========================
+# DEVELOPMENT MEDIA FILES
+# =========================
+
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )
+

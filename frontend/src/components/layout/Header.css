@@ -49,6 +49,8 @@
 
     background: transparent;
 
+    font-size: 14px;
+
 }
 
 
@@ -74,6 +76,14 @@
     padding: 8px;
 
     border-radius: 50%;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
 
 }
 
@@ -114,7 +124,9 @@
 }
 
 
+/* ========================= */
 /* MOBILE */
+/* ========================= */
 
 @media (max-width: 768px) {
 
@@ -135,6 +147,24 @@
     .user-profile div {
 
         display: none;
+
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .header-search {
+
+        width: 140px;
+
+    }
+
+
+    .header-actions {
+
+        gap: 10px;
 
     }
 

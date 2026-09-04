@@ -1,7 +1,13 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import {
+    Routes,
+    Route,
+    Navigate
+} from "react-router-dom";
+
 
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
+
 
 import Dashboard from "../pages/dashboard/Dashboard";
 
@@ -16,7 +22,15 @@ import Reports from "../pages/reports/Reports";
 import Jobs from "../pages/jobs/Jobs";
 
 import Contribution from "../pages/contribution/Contribution";
+
 import CareerAnalytics from "../pages/career/CareerAnalytics";
+
+import Pricing from "../pages/pricing/Pricing";
+
+import Payment from "../pages/payment/Payment";
+
+
+import ProtectedRoute from "./ProtectedRoute";
 
 
 function AppRoutes() {
@@ -35,10 +49,12 @@ function AppRoutes() {
                 path="/"
 
                 element={
+
                     <Navigate
                         to="/dashboard"
                         replace
                     />
+
                 }
 
             />
@@ -74,7 +90,15 @@ function AppRoutes() {
 
                 path="/dashboard"
 
-                element={<Dashboard />}
+                element={
+
+                    <ProtectedRoute>
+
+                        <Dashboard />
+
+                    </ProtectedRoute>
+
+                }
 
             />
 
@@ -87,7 +111,57 @@ function AppRoutes() {
 
                 path="/profile"
 
-                element={<Profile />}
+                element={
+
+                    <ProtectedRoute>
+
+                        <Profile />
+
+                    </ProtectedRoute>
+
+                }
+
+            />
+
+
+            {/* ========================= */}
+            {/* PRICING */}
+            {/* ========================= */}
+
+            <Route
+
+                path="/pricing"
+
+                element={
+
+                    <ProtectedRoute>
+
+                        <Pricing />
+
+                    </ProtectedRoute>
+
+                }
+
+            />
+
+
+            {/* ========================= */}
+            {/* PAYMENT */}
+            {/* ========================= */}
+
+            <Route
+
+                path="/payment"
+
+                element={
+
+                    <ProtectedRoute>
+
+                        <Payment />
+
+                    </ProtectedRoute>
+
+                }
 
             />
 
@@ -100,7 +174,15 @@ function AppRoutes() {
 
                 path="/resume"
 
-                element={<Resume />}
+                element={
+
+                    <ProtectedRoute>
+
+                        <Resume />
+
+                    </ProtectedRoute>
+
+                }
 
             />
 
@@ -113,7 +195,15 @@ function AppRoutes() {
 
                 path="/interview"
 
-                element={<Interview />}
+                element={
+
+                    <ProtectedRoute>
+
+                        <Interview />
+
+                    </ProtectedRoute>
+
+                }
 
             />
 
@@ -126,20 +216,36 @@ function AppRoutes() {
 
                 path="/reports"
 
-                element={<Reports />}
+                element={
+
+                    <ProtectedRoute>
+
+                        <Reports />
+
+                    </ProtectedRoute>
+
+                }
 
             />
 
 
             {/* ========================= */}
-            {/* JOBS */}
+            {/* JOB MATCHES */}
             {/* ========================= */}
 
             <Route
 
                 path="/jobs"
 
-                element={<Jobs />}
+                element={
+
+                    <ProtectedRoute>
+
+                        <Jobs />
+
+                    </ProtectedRoute>
+
+                }
 
             />
 
@@ -152,15 +258,38 @@ function AppRoutes() {
 
                 path="/contribution"
 
-                element={<Contribution />}
+                element={
+
+                    <ProtectedRoute>
+
+                        <Contribution />
+
+                    </ProtectedRoute>
+
+                }
 
             />
 
 
+            {/* ========================= */}
+            {/* CAREER ANALYTICS */}
+            {/* ========================= */}
+
             <Route
-    path="/career-analytics"
-    element={<CareerAnalytics />}
-/>
+
+                path="/career-analytics"
+
+                element={
+
+                    <ProtectedRoute>
+
+                        <CareerAnalytics />
+
+                    </ProtectedRoute>
+
+                }
+
+            />
 
 
             {/* ========================= */}
@@ -172,18 +301,18 @@ function AppRoutes() {
                 path="*"
 
                 element={
+
                     <Navigate
                         to="/dashboard"
                         replace
                     />
+
                 }
 
             />
 
 
         </Routes>
-
-        
 
     );
 

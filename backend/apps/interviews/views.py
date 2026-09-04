@@ -3,6 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
+from django.utils import timezone
+
 from .models import (
     Interview,
     InterviewQuestion,
@@ -10,25 +12,53 @@ from .models import (
 )
 
 from .serializers import InterviewSerializer
-from .services.interview_generator import (
-    get_questions_for_role
-)
-from django.utils import timezone
 
-from apps.resumes.models import Resume
 from apps.resumes.models import Resume
 
 from .services.question_selector import (
     select_personalized_questions
 )
 
+from apps.payments.services.subscription_service import (
+    can_use_feature,
+    record_feature_usage
+)
+
+
+# ==================================================
+# START INTERVIEW
+# ==================================================
+
 class StartInterviewView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+
     def post(self, request):
 
+        # ==========================================
+        # CHECK SUBSCRIPTION LIMIT
+        # ==========================================
+
+        if not can_use_feature(
+            request.user,
+            "INTERVIEW",
+            "interviews"
+        ):
+
+            return Response(
+                {
+                    "error": (
+                        "You have reached your monthly interview "
+                        "limit. Please upgrade your subscription."
+                    )
+                },
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+
         role = request.data.get("role")
+
 
         if not role:
 
@@ -39,7 +69,11 @@ class StartInterviewView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Get user's active resume
+
+        # ==========================================
+        # GET ACTIVE RESUME
+        # ==========================================
+
         try:
 
             resume = Resume.objects.get(
@@ -48,6 +82,7 @@ class StartInterviewView(APIView):
             )
 
             analysis = resume.analysis
+
 
         except Resume.DoesNotExist:
 
@@ -61,6 +96,7 @@ class StartInterviewView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+
         except Exception:
 
             return Response(
@@ -73,15 +109,24 @@ class StartInterviewView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Get extracted skills
+
+        # ==========================================
+        # GET USER SKILLS
+        # ==========================================
+
         user_skills = analysis.skills
 
-        # Select personalized questions
+
+        # ==========================================
+        # SELECT PERSONALIZED QUESTIONS
+        # ==========================================
+
         questions = select_personalized_questions(
             role=role,
             user_skills=user_skills,
             number_of_questions=5
         )
+
 
         if not questions:
 
@@ -92,28 +137,49 @@ class StartInterviewView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Create interview
+
+        # ==========================================
+        # CREATE INTERVIEW
+        # ==========================================
+
         interview = Interview.objects.create(
             user=request.user,
             role=role
         )
 
-        # Create personalized questions
+
+        # ==========================================
+        # CREATE QUESTIONS
+        # ==========================================
+
         for index, question_data in enumerate(
             questions,
             start=1
         ):
 
             InterviewQuestion.objects.create(
-    interview=interview,
-    question_text=question_data["question"],
-    question_order=index,
-    category=question_data["category"],
-    skill=question_data["skill"],
-    difficulty=question_data["difficulty"],
-)
+                interview=interview,
+                question_text=question_data["question"],
+                question_order=index,
+                category=question_data["category"],
+                skill=question_data["skill"],
+                difficulty=question_data["difficulty"],
+            )
+
+
+        # ==========================================
+        # RECORD INTERVIEW USAGE
+        # Only after successfully creating interview
+        # ==========================================
+
+        record_feature_usage(
+            request.user,
+            "INTERVIEW"
+        )
+
 
         serializer = InterviewSerializer(interview)
+
 
         return Response(
             {
@@ -127,15 +193,22 @@ class StartInterviewView(APIView):
             status=status.HTTP_201_CREATED
         )
 
+
+# ==================================================
+# SUBMIT ANSWER
+# ==================================================
+
 class SubmitAnswerView(APIView):
 
     permission_classes = [IsAuthenticated]
+
 
     def post(self, request, question_id):
 
         answer_text = request.data.get(
             "answer_text"
         )
+
 
         if not answer_text:
 
@@ -146,12 +219,14 @@ class SubmitAnswerView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+
         try:
 
             question = InterviewQuestion.objects.get(
                 id=question_id,
                 interview__user=request.user
             )
+
 
         except InterviewQuestion.DoesNotExist:
 
@@ -162,7 +237,9 @@ class SubmitAnswerView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+
         # Prevent multiple answers
+
         if hasattr(question, "answer"):
 
             return Response(
@@ -175,10 +252,12 @@ class SubmitAnswerView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+
         answer = InterviewAnswer.objects.create(
             question=question,
             answer_text=answer_text
         )
+
 
         return Response(
             {
@@ -189,9 +268,14 @@ class SubmitAnswerView(APIView):
         )
 
 
+# ==================================================
+# COMPLETE INTERVIEW
+# ==================================================
+
 class CompleteInterviewView(APIView):
 
     permission_classes = [IsAuthenticated]
+
 
     def post(self, request, interview_id):
 
@@ -202,6 +286,7 @@ class CompleteInterviewView(APIView):
                 user=request.user
             )
 
+
         except Interview.DoesNotExist:
 
             return Response(
@@ -210,6 +295,7 @@ class CompleteInterviewView(APIView):
                 },
                 status=status.HTTP_404_NOT_FOUND
             )
+
 
         if interview.status == "completed":
 
@@ -220,10 +306,15 @@ class CompleteInterviewView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Check unanswered questions
+
+        # ==========================================
+        # CHECK UNANSWERED QUESTIONS
+        # ==========================================
+
         unanswered_questions = interview.questions.filter(
             answer__isnull=True
         )
+
 
         if unanswered_questions.exists():
 
@@ -233,6 +324,7 @@ class CompleteInterviewView(APIView):
                         "Please answer all questions "
                         "before completing the interview."
                     ),
+
                     "unanswered_questions": list(
                         unanswered_questions.values_list(
                             "id",
@@ -243,15 +335,24 @@ class CompleteInterviewView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+
+        # ==========================================
+        # COMPLETE INTERVIEW
+        # ==========================================
+
         interview.status = "completed"
+
         interview.completed_at = timezone.now()
 
         interview.save()
 
+
         return Response(
             {
                 "message": "Interview completed successfully",
+
                 "interview_id": interview.id,
+
                 "status": interview.status,
             }
         )

@@ -26,6 +26,12 @@ import {
 useNavigate
 } from "react-router-dom";
 
+
+import {
+    getSubscriptionStatus,
+    getSubscriptionUsage
+} from "../../services/paymentService";
+
 function Dashboard() {
 
 
@@ -41,6 +47,12 @@ const [error, setError] =
 
 
 const [dashboardData, setDashboardData] =
+    useState(null);
+
+    const [subscriptionData, setSubscriptionData] =
+    useState(null);
+
+const [usageData, setUsageData] =
     useState(null);
 
 
@@ -60,6 +72,16 @@ useEffect(() => {
 
 
             setDashboardData(data);
+
+            const subscription =
+    await getSubscriptionStatus();
+
+setSubscriptionData(subscription);
+
+            const usage =
+    await getSubscriptionUsage();
+
+setUsageData(usage);
 
         }
 
@@ -136,7 +158,85 @@ const developingAreas =
 const categoryScores =
     analytics.category_scores || {};
 
+/* =========================
+   SUBSCRIPTION DATA
+========================= */
 
+const hasSubscription =
+    subscriptionData?.has_subscription || false;
+
+
+const subscription =
+    subscriptionData?.subscription || null;
+
+
+const subscriptionPlan =
+    subscription?.plan || "FREE";
+
+
+const subscriptionStatus =
+    subscription?.status || "INACTIVE";
+
+
+const paymentMethod =
+    subscription?.payment_method || "--";
+
+
+const expiryDate =
+    subscription?.expires_at
+        ? new Date(
+            subscription.expires_at
+        ).toLocaleDateString()
+        : "--";
+
+
+const daysRemaining =
+    subscription?.expires_at
+        ? Math.max(
+
+            0,
+
+            Math.ceil(
+
+                (
+                    new Date(subscription.expires_at) -
+                    new Date()
+                ) / (1000 * 60 * 60 * 24)
+
+            )
+
+        )
+        : 0;
+const resumeUsage =
+    usageData?.resume_analyses || {};
+
+
+const interviewUsage =
+    usageData?.interviews || {};
+
+
+const resumeUsed =
+    resumeUsage.used ?? 0;
+
+
+const resumeLimit =
+    resumeUsage.limit ?? 0;
+
+
+const resumeRemaining =
+    resumeUsage.remaining ?? 0;
+
+
+const interviewUsed =
+    interviewUsage.used ?? 0;
+
+
+const interviewLimit =
+    interviewUsage.limit ?? 0;
+
+
+const interviewRemaining =
+    interviewUsage.remaining ?? 0;
 /* =========================
    FUTURE MODULE DATA
 ========================= */
@@ -511,6 +611,287 @@ return (
                 </div>
 
             </div>
+
+            {/* ========================= */}
+{/* SUBSCRIPTION */}
+{/* ========================= */}
+
+<div className="dashboard-card subscription-card">
+
+    <div className="dashboard-card-header">
+
+        <h3>
+            Subscription
+        </h3>
+
+    </div>
+
+
+    {
+
+        hasSubscription ? (
+
+            <div className="subscription-details">
+
+
+                <div className="subscription-item">
+
+                    <span>
+                        Current Plan
+                    </span>
+
+                    <strong>
+                        {subscriptionPlan}
+                    </strong>
+
+                </div>
+
+
+                <div className="subscription-item">
+
+                    <span>
+                        Status
+                    </span>
+
+                    <strong className="subscription-active">
+
+                        {subscriptionStatus}
+
+                    </strong>
+
+                </div>
+
+
+                <div className="subscription-item">
+
+                    <span>
+                        Payment Method
+                    </span>
+
+                    <strong>
+                        {paymentMethod}
+                    </strong>
+
+                </div>
+
+
+                <div className="subscription-item">
+
+                    <span>
+                        Expires On
+                    </span>
+
+                    <strong>
+                        {expiryDate}
+                    </strong>
+
+                </div>
+
+
+                <div className="subscription-item">
+
+                    <span>
+                        Days Remaining
+                    </span>
+
+                    <strong>
+                        {daysRemaining} days
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+        ) : (
+
+            <div className="no-subscription">
+
+                <p>
+                    You are currently using the Free plan.
+                </p>
+
+
+                <button
+                    className="subscription-button"
+                    onClick={() =>
+                        navigate("/pricing")
+                    }
+                >
+
+                    Upgrade Plan
+
+                </button>
+
+            </div>
+
+        )
+
+    }
+
+</div>
+
+
+
+            {/* ========================= */}
+{/* MONTHLY USAGE */}
+{/* ========================= */}
+
+<div className="dashboard-card usage-card">
+
+    <div className="dashboard-card-header">
+
+        <h3>
+            Monthly Usage
+        </h3>
+
+        <span className="usage-plan">
+            {usageData?.plan || "FREE"} Plan
+        </span>
+
+    </div>
+
+
+    {/* RESUME USAGE */}
+
+    <div className="usage-section">
+
+        <div className="usage-title">
+
+            <div>
+
+                <strong>
+                    Resume Analyses
+                </strong>
+
+                <span>
+                    {resumeUsed} / {resumeLimit} used
+                </span>
+
+            </div>
+
+            <strong>
+                {
+                    resumeRemaining === "Unlimited"
+                        ? "Unlimited"
+                        : `${resumeRemaining} left`
+                }
+            </strong>
+
+        </div>
+
+
+        {
+            resumeLimit !== "Unlimited" && (
+
+                <div className="usage-progress">
+
+                    <div
+
+                        className="usage-progress-fill"
+
+                        style={{
+
+                            width: `${Math.min(
+                                100,
+                                (resumeUsed / resumeLimit) * 100
+                            )}%`
+
+                        }}
+
+                    />
+
+                </div>
+
+            )
+
+        }
+
+    </div>
+
+
+    {/* INTERVIEW USAGE */}
+
+    <div className="usage-section">
+
+        <div className="usage-title">
+
+            <div>
+
+                <strong>
+                    AI Interviews
+                </strong>
+
+                <span>
+                    {interviewUsed} / {interviewLimit} used
+                </span>
+
+            </div>
+
+            <strong>
+                {
+                    interviewRemaining === "Unlimited"
+                        ? "Unlimited"
+                        : `${interviewRemaining} left`
+                }
+            </strong>
+
+        </div>
+
+
+        {
+            interviewLimit !== "Unlimited" && (
+
+                <div className="usage-progress">
+
+                    <div
+
+                        className="usage-progress-fill"
+
+                        style={{
+
+                            width: `${Math.min(
+                                100,
+                                (interviewUsed / interviewLimit) * 100
+                            )}%`
+
+                        }}
+
+                    />
+
+                </div>
+
+            )
+
+        }
+
+    </div>
+
+
+    {/* UPGRADE BUTTON */}
+
+    {
+        usageData?.plan !== "PREMIUM" && (
+
+            <button
+
+                className="usage-upgrade-button"
+
+                onClick={() =>
+                    navigate("/pricing")
+                }
+
+            >
+
+                Upgrade Your Plan
+
+            </button>
+
+        )
+
+    }
+
+</div>
 
 
             {/* ========================= */}

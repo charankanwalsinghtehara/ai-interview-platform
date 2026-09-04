@@ -25,6 +25,9 @@ function Header() {
 
         <header className="header">
 
+
+            {/* SEARCH */}
+
             <div className="header-search">
 
                 <Search size={20} />
@@ -37,9 +40,20 @@ function Header() {
             </div>
 
 
+            {/* USER ACTIONS */}
+
             <div className="header-actions">
 
-                <button className="icon-button">
+
+                <button
+
+                    type="button"
+
+                    className="icon-button"
+
+                    aria-label="Notifications"
+
+                >
 
                     <Bell size={20} />
 
@@ -48,23 +62,33 @@ function Header() {
 
                 <div className="user-profile">
 
+
                     <UserCircle size={34} />
+
 
                     <div>
 
                         <strong>
+
                             {username}
+
                         </strong>
 
+
                         <span>
+
                             AI Career Platform
+
                         </span>
 
                     </div>
 
+
                 </div>
 
+
             </div>
+
 
         </header>
 
