@@ -1,37 +1,38 @@
 import { useState } from "react";
 
 import {
-    Link,
-    useNavigate
+Link,
+useNavigate
 } from "react-router-dom";
 
 import {
-    User,
-    Lock,
-    ArrowRight
+User,
+Lock,
+ArrowRight
 } from "lucide-react";
 
 import AuthLayout from "../../components/layout/AuthLayout";
 
 import {
-    loginUser
+loginUser
 } from "../../services/authService";
 
 import {
-    useAuth
+useAuth
 } from "../../context/AuthContext";
 
 import "../../styles/auth.css";
 
-
 function Login() {
 
-    const navigate = useNavigate();
 
-    const { login } = useAuth();
+const navigate = useNavigate();
+
+const { login } = useAuth();
 
 
-    const [formData, setFormData] = useState({
+const [formData, setFormData] =
+    useState({
 
         username: "",
         password: ""
@@ -39,238 +40,284 @@ function Login() {
     });
 
 
-    const [loading, setLoading] =
-        useState(false);
-
-    const [error, setError] =
-        useState("");
+const [loading, setLoading] =
+    useState(false);
 
 
-    const handleChange = (event) => {
-
-        setFormData({
-
-            ...formData,
-
-            [event.target.name]:
-                event.target.value
-
-        });
-
-    };
+const [error, setError] =
+    useState("");
 
 
-    const handleSubmit = async (event) => {
+const handleChange = (event) => {
 
-        event.preventDefault();
+    setFormData({
 
-        setLoading(true);
+        ...formData,
 
-        setError("");
+        [event.target.name]:
+            event.target.value
 
+    });
 
-        try {
-
-            const data =
-                await loginUser(formData);
-
-
-            login(
-
-                data.user || null,
-
-                data.access,
-
-                data.refresh
-
-            );
+};
 
 
-            navigate("/dashboard");
+const handleSubmit = async (event) => {
 
-        }
+    event.preventDefault();
 
-        catch (error) {
+    setLoading(true);
+
+    setError("");
+
+
+    try {
+
+        const data =
+            await loginUser(formData);
+
+
+        console.log(
+            "Login API response:",
+            data
+        );
+
+
+        if (!data.access) {
 
             setError(
-
-                error.response?.data?.detail ||
-
-                "Login failed. Please check your credentials."
-
+                "Login failed. Access token was not received."
             );
 
-        }
-
-        finally {
-
-            setLoading(false);
+            return;
 
         }
 
-    };
 
+        login(
 
-    return (
+            data.user || {
+                username: formData.username
+            },
 
-        <AuthLayout>
+            data.access,
 
-            <div className="auth-container">
+            data.refresh
 
-                <div className="auth-header">
+        );
 
-                    <h1>
-                        Welcome back 👋
-                    </h1>
 
-                    <p>
-                        Sign in to continue your career journey.
-                    </p>
+        navigate(
+            "/dashboard",
+            {
+                replace: true
+            }
+        );
 
-                </div>
+    }
 
+    catch (error) {
 
-                <form
-                    className="auth-form"
-                    onSubmit={handleSubmit}
-                >
+        console.error(
+            "Login error:",
+            error
+        );
 
-                    <div className="form-group">
 
-                        <label>
-                            Username
-                        </label>
+        setError(
 
+            error.response?.data?.detail ||
 
-                        <div className="auth-input-wrapper">
+            "Login failed. Please check your credentials."
 
-                            <User size={19} />
+        );
 
-                            <input
+    }
 
-                                className="auth-input"
+    finally {
 
-                                type="text"
+        setLoading(false);
 
-                                name="username"
+    }
 
-                                placeholder="Enter your username"
+};
 
-                                value={
-                                    formData.username
-                                }
 
-                                onChange={handleChange}
+return (
 
-                                required
+    <AuthLayout>
 
-                            />
+        <div className="auth-container">
 
-                        </div>
+            <div className="auth-header">
 
-                    </div>
+                <h1>
+                    Welcome back 👋
+                </h1>
 
-
-                    <div className="form-group">
-
-                        <label>
-                            Password
-                        </label>
-
-
-                        <div className="auth-input-wrapper">
-
-                            <Lock size={19} />
-
-                            <input
-
-                                className="auth-input"
-
-                                type="password"
-
-                                name="password"
-
-                                placeholder="Enter your password"
-
-                                value={
-                                    formData.password
-                                }
-
-                                onChange={handleChange}
-
-                                required
-
-                            />
-
-                        </div>
-
-                    </div>
-
-
-                    {
-                        error && (
-
-                            <div className="auth-error">
-
-                                {error}
-
-                            </div>
-
-                        )
-                    }
-
-
-                    <button
-
-                        type="submit"
-
-                        className="auth-submit-button"
-
-                        disabled={loading}
-
-                    >
-
-                        {
-                            loading
-                                ? "Signing in..."
-                                : (
-                                    <>
-                                        Sign In
-
-                                        <ArrowRight
-                                            size={18}
-                                        />
-
-                                    </>
-                                )
-                        }
-
-                    </button>
-
-                </form>
-
-
-                <div className="auth-switch">
-
-                    Don't have an account?
-
-                    {" "}
-
-                    <Link to="/register">
-
-                        Create Account
-
-                    </Link>
-
-                </div>
+                <p>
+                    Sign in to continue your career journey.
+                </p>
 
             </div>
 
-        </AuthLayout>
 
-    );
+            <form
+                className="auth-form"
+                onSubmit={handleSubmit}
+            >
+
+                <div className="form-group">
+
+                    <label>
+                        Username
+                    </label>
+
+
+                    <div className="auth-input-wrapper">
+
+                        <User size={19} />
+
+
+                        <input
+
+                            className="auth-input"
+
+                            type="text"
+
+                            name="username"
+
+                            placeholder="Enter your username"
+
+                            value={
+                                formData.username
+                            }
+
+                            onChange={
+                                handleChange
+                            }
+
+                            required
+
+                        />
+
+                    </div>
+
+                </div>
+
+
+                <div className="form-group">
+
+                    <label>
+                        Password
+                    </label>
+
+
+                    <div className="auth-input-wrapper">
+
+                        <Lock size={19} />
+
+
+                        <input
+
+                            className="auth-input"
+
+                            type="password"
+
+                            name="password"
+
+                            placeholder="Enter your password"
+
+                            value={
+                                formData.password
+                            }
+
+                            onChange={
+                                handleChange
+                            }
+
+                            required
+
+                        />
+
+                    </div>
+
+                </div>
+
+
+                {
+
+                    error && (
+
+                        <div className="auth-error">
+
+                            {error}
+
+                        </div>
+
+                    )
+
+                }
+
+
+                <button
+
+                    type="submit"
+
+                    className="auth-submit-button"
+
+                    disabled={loading}
+
+                >
+
+                    {
+
+                        loading
+
+                            ? "Signing in..."
+
+                            : (
+
+                                <>
+
+                                    Sign In
+
+                                    <ArrowRight
+                                        size={18}
+                                    />
+
+                                </>
+
+                            )
+
+                    }
+
+                </button>
+
+            </form>
+
+
+            <div className="auth-switch">
+
+                Don't have an account?
+
+                {" "}
+
+                <Link to="/register">
+
+                    Create Account
+
+                </Link>
+
+            </div>
+
+        </div>
+
+    </AuthLayout>
+
+);
+
 
 }
-
 
 export default Login;

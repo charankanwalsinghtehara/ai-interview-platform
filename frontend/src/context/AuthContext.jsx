@@ -1,149 +1,177 @@
 import {
 
-    createContext,
-    useContext,
-    useState
+createContext,
+useContext,
+useState
+
 
 } from "react";
 
-
 const AuthContext =
-    createContext();
-
+createContext(null);
 
 export function AuthProvider({
-    children
+children
 }) {
 
 
-    const getStoredUser = () => {
+const getStoredUser = () => {
+
+    try {
 
         const storedUser =
             localStorage.getItem("user");
 
 
-        if (!storedUser) {
+        return storedUser
+            ? JSON.parse(storedUser)
+            : null;
 
-            return null;
+    }
 
-        }
+    catch {
 
+        return null;
 
-        try {
+    }
 
-            return JSON.parse(storedUser);
-
-        }
-
-        catch {
-
-            return null;
-
-        }
-
-    };
+};
 
 
-    const [user, setUser] =
-        useState(getStoredUser);
+const getStoredToken = () => {
+
+    return localStorage.getItem(
+        "access_token"
+    );
+
+};
 
 
-    const login = (
-        userData,
-        accessToken,
-        refreshToken
-    ) => {
-
-        if (accessToken) {
-
-            localStorage.setItem(
-                "access_token",
-                accessToken
-            );
-
-        }
+const [user, setUser] =
+    useState(getStoredUser);
 
 
-        if (refreshToken) {
-
-            localStorage.setItem(
-                "refresh_token",
-                refreshToken
-            );
-
-        }
+const [accessToken, setAccessToken] =
+    useState(getStoredToken);
 
 
-        if (userData) {
+const login = (
+    userData,
+    newAccessToken,
+    refreshToken
+) => {
 
-            localStorage.setItem(
-                "user",
-                JSON.stringify(userData)
-            );
+    if (newAccessToken) {
 
-        }
-
-
-        setUser(userData);
-
-    };
-
-
-    const logout = () => {
-
-        localStorage.removeItem(
-            "access_token"
+        localStorage.setItem(
+            "access_token",
+            newAccessToken
         );
 
-        localStorage.removeItem(
-            "refresh_token"
+        setAccessToken(
+            newAccessToken
         );
 
-        localStorage.removeItem(
-            "user"
+    }
+
+
+    if (refreshToken) {
+
+        localStorage.setItem(
+            "refresh_token",
+            refreshToken
         );
 
-
-        setUser(null);
-
-    };
+    }
 
 
-    const isAuthenticated =
-        !!localStorage.getItem(
-            "access_token"
-        );
+    const userToStore =
+        userData || {
+            username: "Candidate"
+        };
 
 
-    return (
+    localStorage.setItem(
+        "user",
+        JSON.stringify(userToStore)
+    );
 
-        <AuthContext.Provider
 
-            value={{
+    setUser(userToStore);
 
-                user,
+};
 
-                isAuthenticated,
 
-                login,
+const logout = () => {
 
-                logout
+    localStorage.removeItem(
+        "access_token"
+    );
 
-            }}
+    localStorage.removeItem(
+        "refresh_token"
+    );
 
-        >
+    localStorage.removeItem(
+        "user"
+    );
 
-            {children}
 
-        </AuthContext.Provider>
+    setAccessToken(null);
 
+    setUser(null);
+
+};
+
+
+const isAuthenticated =
+    Boolean(accessToken);
+
+
+return (
+
+    <AuthContext.Provider
+
+        value={{
+
+            user,
+
+            isAuthenticated,
+
+            login,
+
+            logout
+
+        }}
+
+    >
+
+        {children}
+
+    </AuthContext.Provider>
+
+);
+
+
+}
+
+export function useAuth() {
+
+
+const context =
+    useContext(AuthContext);
+
+
+if (!context) {
+
+    throw new Error(
+        "useAuth must be used inside AuthProvider"
     );
 
 }
 
 
-export function useAuth() {
+return context;
 
-    return useContext(AuthContext);
 
 }
