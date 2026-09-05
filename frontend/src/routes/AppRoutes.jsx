@@ -27,7 +27,6 @@ function PublicRoute({ children }) {
 
 const { isAuthenticated } = useAuth();
 
-
 if (isAuthenticated) {
 
     return (
@@ -38,7 +37,6 @@ if (isAuthenticated) {
     );
 
 }
-
 
 return children;
 ```
