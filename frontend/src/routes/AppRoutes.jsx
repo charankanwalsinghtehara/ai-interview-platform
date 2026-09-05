@@ -1,7 +1,7 @@
 import {
-Routes,
-Route,
-Navigate
+    Routes,
+    Route,
+    Navigate
 } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
@@ -22,180 +22,179 @@ import Payment from "../pages/payment/Payment";
 
 import ProtectedRoute from "./ProtectedRoute";
 
+
 function PublicRoute({ children }) {
 
+    const { isAuthenticated } = useAuth();
 
-const { isAuthenticated } = useAuth();
+    if (isAuthenticated) {
 
-if (isAuthenticated) {
+        return (
+            <Navigate
+                to="/dashboard"
+                replace
+            />
+        );
+
+    }
+
+    return children;
+
+}
+
+
+function AppRoutes() {
 
     return (
-        <Navigate
-            to="/dashboard"
-            replace
-        />
+
+        <Routes>
+
+            <Route
+                path="/"
+                element={
+                    <Navigate
+                        to="/dashboard"
+                        replace
+                    />
+                }
+            />
+
+
+            <Route
+                path="/login"
+                element={
+                    <PublicRoute>
+                        <Login />
+                    </PublicRoute>
+                }
+            />
+
+
+            <Route
+                path="/register"
+                element={
+                    <PublicRoute>
+                        <Register />
+                    </PublicRoute>
+                }
+            />
+
+
+            <Route
+                path="/dashboard"
+                element={
+                    <ProtectedRoute>
+                        <Dashboard />
+                    </ProtectedRoute>
+                }
+            />
+
+
+            <Route
+                path="/profile"
+                element={
+                    <ProtectedRoute>
+                        <Profile />
+                    </ProtectedRoute>
+                }
+            />
+
+
+            <Route
+                path="/resume"
+                element={
+                    <ProtectedRoute>
+                        <Resume />
+                    </ProtectedRoute>
+                }
+            />
+
+
+            <Route
+                path="/interview"
+                element={
+                    <ProtectedRoute>
+                        <Interview />
+                    </ProtectedRoute>
+                }
+            />
+
+
+            <Route
+                path="/reports"
+                element={
+                    <ProtectedRoute>
+                        <Reports />
+                    </ProtectedRoute>
+                }
+            />
+
+
+            <Route
+                path="/jobs"
+                element={
+                    <ProtectedRoute>
+                        <Jobs />
+                    </ProtectedRoute>
+                }
+            />
+
+
+            <Route
+                path="/career-analytics"
+                element={
+                    <ProtectedRoute>
+                        <CareerAnalytics />
+                    </ProtectedRoute>
+                }
+            />
+
+
+            <Route
+                path="/contribution"
+                element={
+                    <ProtectedRoute>
+                        <Contribution />
+                    </ProtectedRoute>
+                }
+            />
+
+
+            <Route
+                path="/pricing"
+                element={
+                    <ProtectedRoute>
+                        <Pricing />
+                    </ProtectedRoute>
+                }
+            />
+
+
+            <Route
+                path="/payment"
+                element={
+                    <ProtectedRoute>
+                        <Payment />
+                    </ProtectedRoute>
+                }
+            />
+
+
+            <Route
+                path="*"
+                element={
+                    <Navigate
+                        to="/dashboard"
+                        replace
+                    />
+                }
+            />
+
+        </Routes>
+
     );
 
 }
 
-return children;
-
-
-}
-
-function AppRoutes() {
-
-
-return (
-
-    <Routes>
-
-        <Route
-            path="/"
-            element={
-                <Navigate
-                    to="/dashboard"
-                    replace
-                />
-            }
-        />
-
-
-        <Route
-            path="/login"
-            element={
-                <PublicRoute>
-                    <Login />
-                </PublicRoute>
-            }
-        />
-
-
-        <Route
-            path="/register"
-            element={
-                <PublicRoute>
-                    <Register />
-                </PublicRoute>
-            }
-        />
-
-
-        <Route
-            path="/dashboard"
-            element={
-                <ProtectedRoute>
-                    <Dashboard />
-                </ProtectedRoute>
-            }
-        />
-
-
-        <Route
-            path="/profile"
-            element={
-                <ProtectedRoute>
-                    <Profile />
-                </ProtectedRoute>
-            }
-        />
-
-
-        <Route
-            path="/resume"
-            element={
-                <ProtectedRoute>
-                    <Resume />
-                </ProtectedRoute>
-            }
-        />
-
-
-        <Route
-            path="/interview"
-            element={
-                <ProtectedRoute>
-                    <Interview />
-                </ProtectedRoute>
-            }
-        />
-
-
-        <Route
-            path="/reports"
-            element={
-                <ProtectedRoute>
-                    <Reports />
-                </ProtectedRoute>
-            }
-        />
-
-
-        <Route
-            path="/jobs"
-            element={
-                <ProtectedRoute>
-                    <Jobs />
-                </ProtectedRoute>
-            }
-        />
-
-
-        <Route
-            path="/career-analytics"
-            element={
-                <ProtectedRoute>
-                    <CareerAnalytics />
-                </ProtectedRoute>
-            }
-        />
-
-
-        <Route
-            path="/contribution"
-            element={
-                <ProtectedRoute>
-                    <Contribution />
-                </ProtectedRoute>
-            }
-        />
-
-
-        <Route
-            path="/pricing"
-            element={
-                <ProtectedRoute>
-                    <Pricing />
-                </ProtectedRoute>
-            }
-        />
-
-
-        <Route
-            path="/payment"
-            element={
-                <ProtectedRoute>
-                    <Payment />
-                </ProtectedRoute>
-            }
-        />
-
-
-        <Route
-            path="*"
-            element={
-                <Navigate
-                    to="/dashboard"
-                    replace
-                />
-            }
-        />
-
-    </Routes>
-
-);
-
-
-}
 
 export default AppRoutes;
