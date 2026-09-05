@@ -19,15 +19,10 @@ from .services.question_selector import (
     select_personalized_questions
 )
 
-from apps.payments.services.subscription_service import (
-    can_use_feature,
-    record_feature_usage
-)
 
-
-# ==================================================
+# ==========================================
 # START INTERVIEW
-# ==================================================
+# ==========================================
 
 class StartInterviewView(APIView):
 
@@ -35,27 +30,6 @@ class StartInterviewView(APIView):
 
 
     def post(self, request):
-
-        # ==========================================
-        # CHECK SUBSCRIPTION LIMIT
-        # ==========================================
-
-        if not can_use_feature(
-            request.user,
-            "INTERVIEW",
-            "interviews"
-        ):
-
-            return Response(
-                {
-                    "error": (
-                        "You have reached your monthly interview "
-                        "limit. Please upgrade your subscription."
-                    )
-                },
-                status=status.HTTP_403_FORBIDDEN
-            )
-
 
         role = request.data.get("role")
 
@@ -71,7 +45,7 @@ class StartInterviewView(APIView):
 
 
         # ==========================================
-        # GET ACTIVE RESUME
+        # GET USER'S ACTIVE RESUME
         # ==========================================
 
         try:
@@ -111,7 +85,7 @@ class StartInterviewView(APIView):
 
 
         # ==========================================
-        # GET USER SKILLS
+        # GET EXTRACTED SKILLS
         # ==========================================
 
         user_skills = analysis.skills
@@ -122,9 +96,13 @@ class StartInterviewView(APIView):
         # ==========================================
 
         questions = select_personalized_questions(
+
             role=role,
+
             user_skills=user_skills,
+
             number_of_questions=5
+
         )
 
 
@@ -143,8 +121,11 @@ class StartInterviewView(APIView):
         # ==========================================
 
         interview = Interview.objects.create(
+
             user=request.user,
+
             role=role
+
         )
 
 
@@ -158,24 +139,20 @@ class StartInterviewView(APIView):
         ):
 
             InterviewQuestion.objects.create(
+
                 interview=interview,
+
                 question_text=question_data["question"],
+
                 question_order=index,
+
                 category=question_data["category"],
+
                 skill=question_data["skill"],
+
                 difficulty=question_data["difficulty"],
+
             )
-
-
-        # ==========================================
-        # RECORD INTERVIEW USAGE
-        # Only after successfully creating interview
-        # ==========================================
-
-        record_feature_usage(
-            request.user,
-            "INTERVIEW"
-        )
 
 
         serializer = InterviewSerializer(interview)
@@ -186,17 +163,20 @@ class StartInterviewView(APIView):
                 "message":
                     "Personalized interview started successfully",
 
-                "user_skills": user_skills,
+                "user_skills":
+                    user_skills,
 
-                "interview": serializer.data,
+                "interview":
+                    serializer.data,
+
             },
             status=status.HTTP_201_CREATED
         )
 
 
-# ==================================================
+# ==========================================
 # SUBMIT ANSWER
-# ==================================================
+# ==========================================
 
 class SubmitAnswerView(APIView):
 
@@ -220,11 +200,18 @@ class SubmitAnswerView(APIView):
             )
 
 
+        # ==========================================
+        # GET QUESTION
+        # ==========================================
+
         try:
 
             question = InterviewQuestion.objects.get(
+
                 id=question_id,
+
                 interview__user=request.user
+
             )
 
 
@@ -238,7 +225,9 @@ class SubmitAnswerView(APIView):
             )
 
 
-        # Prevent multiple answers
+        # ==========================================
+        # PREVENT MULTIPLE ANSWERS
+        # ==========================================
 
         if hasattr(question, "answer"):
 
@@ -253,24 +242,35 @@ class SubmitAnswerView(APIView):
             )
 
 
+        # ==========================================
+        # SAVE ANSWER
+        # ==========================================
+
         answer = InterviewAnswer.objects.create(
+
             question=question,
+
             answer_text=answer_text
+
         )
 
 
         return Response(
             {
-                "message": "Answer submitted successfully",
-                "answer_id": answer.id,
+                "message":
+                    "Answer submitted successfully",
+
+                "answer_id":
+                    answer.id,
+
             },
             status=status.HTTP_201_CREATED
         )
 
 
-# ==================================================
+# ==========================================
 # COMPLETE INTERVIEW
-# ==================================================
+# ==========================================
 
 class CompleteInterviewView(APIView):
 
@@ -279,11 +279,18 @@ class CompleteInterviewView(APIView):
 
     def post(self, request, interview_id):
 
+        # ==========================================
+        # GET INTERVIEW
+        # ==========================================
+
         try:
 
             interview = Interview.objects.get(
+
                 id=interview_id,
+
                 user=request.user
+
             )
 
 
@@ -297,11 +304,16 @@ class CompleteInterviewView(APIView):
             )
 
 
+        # ==========================================
+        # CHECK IF ALREADY COMPLETED
+        # ==========================================
+
         if interview.status == "completed":
 
             return Response(
                 {
-                    "error": "Interview is already completed."
+                    "error":
+                        "Interview is already completed."
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
@@ -326,13 +338,86 @@ class CompleteInterviewView(APIView):
                     ),
 
                     "unanswered_questions": list(
+
                         unanswered_questions.values_list(
                             "id",
                             flat=True
                         )
+
                     )
+
                 },
                 status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+        # ==========================================
+        # IMPORT EVALUATION SERVICES
+        # ==========================================
+
+        from apps.evaluation.services.answer_evaluator import (
+            evaluate_answer
+        )
+
+
+        from apps.evaluation.models import (
+            AnswerEvaluation
+        )
+
+
+        # ==========================================
+        # GET ALL ANSWERS
+        # ==========================================
+
+        answers = InterviewAnswer.objects.filter(
+
+            question__interview=interview
+
+        ).select_related(
+            "question"
+        )
+
+
+        # ==========================================
+        # AUTOMATICALLY EVALUATE ALL ANSWERS
+        # ==========================================
+
+        for answer in answers:
+
+            question = answer.question
+
+
+            result = evaluate_answer(
+
+                answer_text=answer.answer_text,
+
+                skill=question.skill,
+
+                category=question.category
+
+            )
+
+
+            AnswerEvaluation.objects.update_or_create(
+
+                answer=answer,
+
+                defaults={
+
+                    "word_count":
+                        result["word_count"],
+
+                    "length_score":
+                        result["length_score"],
+
+                    "keyword_score":
+                        result["keyword_score"],
+
+                    "final_score":
+                        result["final_score"],
+
+                }
+
             )
 
 
@@ -347,12 +432,24 @@ class CompleteInterviewView(APIView):
         interview.save()
 
 
+        # ==========================================
+        # SUCCESS RESPONSE
+        # ==========================================
+
         return Response(
             {
-                "message": "Interview completed successfully",
+                "message":
+                    "Interview completed and answers evaluated successfully",
 
-                "interview_id": interview.id,
+                "interview_id":
+                    interview.id,
 
-                "status": interview.status,
-            }
+                "status":
+                    interview.status,
+
+                "evaluated_answers":
+                    answers.count(),
+
+            },
+            status=status.HTTP_200_OK
         )

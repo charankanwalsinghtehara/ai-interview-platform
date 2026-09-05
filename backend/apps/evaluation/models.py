@@ -6,63 +6,154 @@ from apps.interviews.models import (
 )
 
 
+# ==========================================
+# ANSWER EVALUATION
+# ==========================================
+
 class AnswerEvaluation(models.Model):
 
     answer = models.OneToOneField(
+
         InterviewAnswer,
+
         on_delete=models.CASCADE,
+
         related_name="evaluation"
+
     )
 
-    word_count = models.PositiveIntegerField(default=0)
 
-    length_score = models.FloatField(default=0)
+    word_count = models.PositiveIntegerField(
+        default=0
+    )
 
-    keyword_score = models.FloatField(default=0)
 
-    final_score = models.FloatField(default=0)
+    length_score = models.FloatField(
+        default=0
+    )
+
+
+    keyword_score = models.FloatField(
+        default=0
+    )
+
+
+    final_score = models.FloatField(
+        default=0
+    )
+
 
     evaluated_at = models.DateTimeField(
         auto_now_add=True
     )
 
-    def __str__(self):
-        return f"Evaluation - Answer {self.answer.id}"
 
+    def __str__(self):
+
+        return (
+            f"Evaluation - Answer {self.answer.id}"
+        )
+
+
+# ==========================================
+# INTERVIEW REPORT
+# ==========================================
 
 class InterviewReport(models.Model):
 
     interview = models.OneToOneField(
+
         Interview,
+
         on_delete=models.CASCADE,
+
         related_name="evaluation_report"
+
     )
 
-    overall_score = models.FloatField(default=0)
+
+    # ------------------------------------------
+    # OVERALL PERFORMANCE
+    # ------------------------------------------
+
+    overall_score = models.FloatField(
+        default=0
+    )
+
 
     performance_level = models.CharField(
+
         max_length=50,
+
         default="Needs Improvement"
+
     )
+
+
+    # ------------------------------------------
+    # CATEGORY SCORES
+    # ------------------------------------------
+
+    communication_score = models.FloatField(
+        default=0
+    )
+
+
+    technical_score = models.FloatField(
+        default=0
+    )
+
+
+    # ------------------------------------------
+    # INSIGHTS
+    # ------------------------------------------
+
+    strengths = models.JSONField(
+        default=list,
+        blank=True
+    )
+
+
+    improvement_areas = models.JSONField(
+        default=list,
+        blank=True
+    )
+
+
+    # ------------------------------------------
+    # INTERVIEW STATISTICS
+    # ------------------------------------------
 
     total_questions = models.PositiveIntegerField(
         default=0
     )
 
+
     evaluated_answers = models.PositiveIntegerField(
         default=0
     )
+
+
+    # ------------------------------------------
+    # TIMESTAMPS
+    # ------------------------------------------
 
     created_at = models.DateTimeField(
         auto_now_add=True
     )
 
+
     updated_at = models.DateTimeField(
         auto_now=True
     )
 
+
     def __str__(self):
+
         return (
+
             f"{self.interview.user.username} - "
-            f"{self.overall_score}%"
+
+            f"{round(self.overall_score, 2)}%"
+
         )

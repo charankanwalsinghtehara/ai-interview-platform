@@ -10,35 +10,34 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file if present
+load_dotenv(BASE_DIR / ".env")
+
+DEBUG = os.environ.get("DEBUG", "False").lower() in ("1", "true", "yes", "on")
+
 
 # ==================================================
-# SECURITY
+# SECURITY SETTINGS
 # ==================================================
 
-SECRET_KEY = os.environ.get(
-    "SECRET_KEY",
-    "django-insecure-change-this-in-production"
+SECURE_PROXY_SSL_HEADER = (
+    "HTTP_X_FORWARDED_PROTO",
+    "https"
 )
 
+SECRET_KEY = (
+    os.environ.get("SECRET_KEY")
+    or "django-insecure-local-development-key-change-before-production"
+)
 
-DEBUG = os.environ.get(
-    "DEBUG",
-    "False"
-).lower() == "true"
+SECURE_SSL_REDIRECT = False
 
 
-ALLOWED_HOSTS = [
+SESSION_COOKIE_SECURE = not DEBUG
 
-    host.strip()
 
-    for host in os.environ.get(
-        "ALLOWED_HOSTS",
-        "localhost,127.0.0.1"
-    ).split(",")
+CSRF_COOKIE_SECURE = not DEBUG
 
-    if host.strip()
-
-]
 
 
 # ==================================================
@@ -292,16 +291,14 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = [
 
-    origin.strip()
+    "http://localhost:5173",
 
-    for origin in os.environ.get(
-        "CORS_ALLOWED_ORIGINS",
-        "http://localhost:5173,http://127.0.0.1:5173"
-    ).split(",")
-
-    if origin.strip()
+    "http://127.0.0.1:5173",
 
 ]
+
+
+CORS_ALLOW_CREDENTIALS = True
 
 
 # ==================================================
