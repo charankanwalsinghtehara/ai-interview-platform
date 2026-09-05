@@ -31,12 +31,10 @@ const { isAuthenticated } = useAuth();
 if (isAuthenticated) {
 
     return (
-
         <Navigate
             to="/dashboard"
             replace
         />
-
     );
 
 }
@@ -54,268 +52,172 @@ return (
 
     <Routes>
 
-
         {/* DEFAULT */}
 
         <Route
-
             path="/"
-
             element={
-
                 <Navigate
                     to="/dashboard"
                     replace
                 />
-
             }
-
         />
 
 
         {/* AUTHENTICATION */}
 
         <Route
-
             path="/login"
-
             element={
-
                 <PublicRoute>
-
                     <Login />
-
                 </PublicRoute>
-
             }
-
         />
 
 
         <Route
-
             path="/register"
-
             element={
-
                 <PublicRoute>
-
                     <Register />
-
                 </PublicRoute>
-
             }
-
         />
 
 
         {/* DASHBOARD */}
 
         <Route
-
             path="/dashboard"
-
             element={
-
                 <ProtectedRoute>
-
                     <Dashboard />
-
                 </ProtectedRoute>
-
             }
-
         />
 
 
         {/* PROFILE */}
 
         <Route
-
             path="/profile"
-
             element={
-
                 <ProtectedRoute>
-
                     <Profile />
-
                 </ProtectedRoute>
-
             }
-
         />
 
 
         {/* RESUME */}
 
         <Route
-
             path="/resume"
-
             element={
-
                 <ProtectedRoute>
-
                     <Resume />
-
                 </ProtectedRoute>
-
             }
-
         />
 
 
         {/* AI INTERVIEW */}
 
         <Route
-
             path="/interview"
-
             element={
-
                 <ProtectedRoute>
-
                     <Interview />
-
                 </ProtectedRoute>
-
             }
-
         />
 
 
         {/* REPORTS */}
 
         <Route
-
             path="/reports"
-
             element={
-
                 <ProtectedRoute>
-
                     <Reports />
-
                 </ProtectedRoute>
-
             }
-
         />
 
 
         {/* JOB MATCHES */}
 
         <Route
-
             path="/jobs"
-
             element={
-
                 <ProtectedRoute>
-
                     <Jobs />
-
                 </ProtectedRoute>
-
             }
-
         />
 
 
         {/* CAREER ANALYTICS */}
 
         <Route
-
             path="/career-analytics"
-
             element={
-
                 <ProtectedRoute>
-
                     <CareerAnalytics />
-
                 </ProtectedRoute>
-
             }
-
         />
 
 
         {/* CONTRIBUTION */}
 
         <Route
-
             path="/contribution"
-
             element={
-
                 <ProtectedRoute>
-
                     <Contribution />
-
                 </ProtectedRoute>
-
             }
-
         />
 
 
         {/* PRICING */}
 
         <Route
-
             path="/pricing"
-
             element={
-
                 <ProtectedRoute>
-
                     <Pricing />
-
                 </ProtectedRoute>
-
             }
-
         />
 
 
         {/* PAYMENT */}
 
         <Route
-
             path="/payment"
-
             element={
-
                 <ProtectedRoute>
-
                     <Payment />
-
                 </ProtectedRoute>
-
             }
-
         />
 
 
         {/* 404 */}
 
         <Route
-
             path="*"
-
             element={
-
                 <Navigate
                     to="/dashboard"
                     replace
                 />
-
             }
-
         />
-
 
     </Routes>
 
