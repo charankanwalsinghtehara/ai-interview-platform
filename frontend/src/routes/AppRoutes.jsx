@@ -39,18 +39,16 @@ if (isAuthenticated) {
 }
 
 return children;
-```
+
 
 }
 
 function AppRoutes() {
 
-```
+
 return (
 
     <Routes>
-
-        {/* DEFAULT */}
 
         <Route
             path="/"
@@ -62,8 +60,6 @@ return (
             }
         />
 
-
-        {/* AUTHENTICATION */}
 
         <Route
             path="/login"
@@ -85,8 +81,6 @@ return (
         />
 
 
-        {/* DASHBOARD */}
-
         <Route
             path="/dashboard"
             element={
@@ -96,8 +90,6 @@ return (
             }
         />
 
-
-        {/* PROFILE */}
 
         <Route
             path="/profile"
@@ -109,8 +101,6 @@ return (
         />
 
 
-        {/* RESUME */}
-
         <Route
             path="/resume"
             element={
@@ -120,8 +110,6 @@ return (
             }
         />
 
-
-        {/* AI INTERVIEW */}
 
         <Route
             path="/interview"
@@ -133,8 +121,6 @@ return (
         />
 
 
-        {/* REPORTS */}
-
         <Route
             path="/reports"
             element={
@@ -144,8 +130,6 @@ return (
             }
         />
 
-
-        {/* JOB MATCHES */}
 
         <Route
             path="/jobs"
@@ -157,8 +141,6 @@ return (
         />
 
 
-        {/* CAREER ANALYTICS */}
-
         <Route
             path="/career-analytics"
             element={
@@ -168,8 +150,6 @@ return (
             }
         />
 
-
-        {/* CONTRIBUTION */}
 
         <Route
             path="/contribution"
@@ -181,8 +161,6 @@ return (
         />
 
 
-        {/* PRICING */}
-
         <Route
             path="/pricing"
             element={
@@ -193,8 +171,6 @@ return (
         />
 
 
-        {/* PAYMENT */}
-
         <Route
             path="/payment"
             element={
@@ -204,8 +180,6 @@ return (
             }
         />
 
-
-        {/* 404 */}
 
         <Route
             path="*"
