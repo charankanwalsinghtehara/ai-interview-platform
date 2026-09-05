@@ -1,8 +1,9 @@
-
 import os
 
 from pathlib import Path
+
 from dotenv import load_dotenv
+
 
 # ==================================================
 # BASE DIRECTORY
@@ -10,34 +11,67 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load environment variables from .env file if present
+
+# ==================================================
+# LOAD ENVIRONMENT VARIABLES
+# ==================================================
+
 load_dotenv(BASE_DIR / ".env")
 
-DEBUG = os.environ.get("DEBUG", "False").lower() in ("1", "true", "yes", "on")
-
 
 # ==================================================
-# SECURITY SETTINGS
+# DEBUG
 # ==================================================
 
-SECURE_PROXY_SSL_HEADER = (
-    "HTTP_X_FORWARDED_PROTO",
-    "https"
+DEBUG = os.environ.get(
+    "DEBUG",
+    "False"
+).lower() in (
+    "1",
+    "true",
+    "yes",
+    "on"
 )
+
+
+# ==================================================
+# SECURITY
+# ==================================================
 
 SECRET_KEY = (
     os.environ.get("SECRET_KEY")
     or "django-insecure-local-development-key-change-before-production"
 )
 
-SECURE_SSL_REDIRECT = False
+
+# ==================================================
+# ALLOWED HOSTS
+# ==================================================
+
+ALLOWED_HOSTS = [
+
+    # Local development
+
+    "localhost",
+
+    "127.0.0.1",
 
 
-SESSION_COOKIE_SECURE = not DEBUG
+    # Render backend
+
+    "ai-interview-platform-yeyp.onrender.com",
+
+]
 
 
-CSRF_COOKIE_SECURE = not DEBUG
+# ==================================================
+# PROXY / HTTPS
+# ==================================================
 
+SECURE_PROXY_SSL_HEADER = (
+    "HTTP_X_FORWARDED_PROTO",
+    "https"
+)
 
 
 # ==================================================
@@ -49,30 +83,45 @@ INSTALLED_APPS = [
     # Django apps
 
     "django.contrib.admin",
+
     "django.contrib.auth",
+
     "django.contrib.contenttypes",
+
     "django.contrib.sessions",
+
     "django.contrib.messages",
+
     "django.contrib.staticfiles",
 
 
     # Third-party apps
 
     "rest_framework",
+
     "corsheaders",
 
 
     # Local apps
 
     "apps.core",
+
     "apps.accounts",
+
     "apps.resumes",
+
     "apps.intelligence",
+
     "apps.analytics",
+
     "apps.interviews",
+
     "apps.evaluation",
+
     "apps.reports",
+
     "apps.jobs",
+
     "apps.payments.apps.PaymentsConfig",
 
 ]
@@ -291,9 +340,13 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = [
 
+    # Local Vite frontend
+
     "http://localhost:5173",
 
     "http://127.0.0.1:5173",
+
+    # Add your deployed frontend URL here later
 
 ]
 
@@ -302,7 +355,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 
 # ==================================================
-# CSRF
+# CSRF TRUSTED ORIGINS
 # ==================================================
 
 CSRF_TRUSTED_ORIGINS = [
@@ -325,14 +378,13 @@ CSRF_TRUSTED_ORIGINS = [
 
 if not DEBUG:
 
-    SECURE_PROXY_SSL_HEADER = (
-        "HTTP_X_FORWARDED_PROTO",
-        "https"
-    )
+    # Render handles HTTPS through its proxy
 
     SECURE_SSL_REDIRECT = True
 
+
     SESSION_COOKIE_SECURE = True
+
 
     CSRF_COOKIE_SECURE = True
 
@@ -344,4 +396,3 @@ if not DEBUG:
 EMAIL_BACKEND = (
     "django.core.mail.backends.console.EmailBackend"
 )
-
